@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>coordTransform</title>
+    <link href="./bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="content">
+    <h4 class="alert alert-info">坐标转换(GPS坐标==>谷歌坐标)</h4>
+    <div style="margin-bottom:10px;">
+        <span class="label label-warning">要输入正确的坐标格式</span>
+        <span class="label label-danger">坐标之间用英文的逗号隔开</span>
+        <span class="label label-success">经纬度分开输入</span>
+    </div>
+    <form>
+        <div class="form-group">
+            <label>请输入GPS经度：</label>
+            <textarea type="text" class="inputs1" placeholder="输入格式如下：120.243234,120.4554,120.6532 依次输入"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>请输入GPS纬度：</label>
+            <textarea type="text" class="inputs2" placeholder="输入格式如下：120.243234,120.4554,120.6532 依次输入"></textarea>
+        </div>
+
+    </form>
+
+    <div>
+        <button onClick="transforms()" type="button" class="btn btn-success">点击进行批量转换</button>
+        <button onClick="clearInput()" type="button" class="btn btn-info">清空输入框</button>
+    </div>
+
+    <h3>转换结果谷歌经纬度: <button type="button" class="btn btn-danger" style='float:right;'onClick='clears()'>清空列表</button> </h3>
+   
+        
+    <div class='conts'></div>
+</div>
+
+<script src="./index.js"></script>
+<script>
+     
+    function transforms(){
+        var log = [];
+        var inputs1 = document.getElementsByClassName('inputs1')[0];
+        var inputs1Text = inputs1.value.replace(/(^\s*)|(\s*$)/g, "");
+        log = inputs1Text.split(","); 
+
+        var lat = [];
+        var inputs2 = document.getElementsByClassName('inputs2')[0];
+        var inputs2Text = inputs2.value.replace(/(^\s*)|(\s*$)/g, "");
+        lat = inputs2Text.split(",");
+
+        var arrs = [];
+    
+        for(var i=0; i<log.length; i++){
+            arrs.push({
+                log:parseFloat(log[i]),
+                lat:parseFloat(lat[i])
+            })
+        }
+
+        if(inputs2Text=='' || inputs1==''){
+            alert('请输入经纬度！')
+        }else{
+            trans(arrs);
+        }
+      
+    }
+ 
+    function trans(arrs){
+        var divs = document.getElementsByClassName('conts')[0];
+        for(var j=0;j<arrs.length; j++){
+           var logs = arrs[j].log;
+           var lats = arrs[j].lat;
+           var wgs84togcj02 = coordtransform.wgs84togcj02(logs,lats);
+           var para=document.createElement("p");
+           var node=document.createTextNode(wgs84togcj02);
+           para.appendChild(node);
+           divs.appendChild(para);
+        }
+    }
+
+    function clears(){
+        var divs = document.getElementsByClassName('conts')[0];
+        divs.innerHTML = '';
+    }
+
+    function clearInput(){
+        var inputs1 = document.getElementsByClassName('inputs1')[0];
+        var inputs2 = document.getElementsByClassName('inputs2')[0];
+        inputs1.value = '';
+        inputs2.value = '';
+    }
+    
+</script>
+<style>
+    body{font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif}
+    h4{text-align: center; font-size: 24px; margin-top:30px; }
+    .inputs1{ width: 1199px; height: 150px; font-size: 14px; padding: 10px;}
+    .inputs2{ width: 1199px; height: 150px; font-size: 14px; padding: 10px;}
+    p{padding-bottom: 10px; border-bottom:1px solid #ccc;}
+    .content{ width: 1200px; overflow: hidden; margin: 0 auto;}
+    h3{ line-height: 35px; background: rgb(243, 239, 239); padding: 5px; border-radius:5px; }
+</style>
+</body>
+</html>
